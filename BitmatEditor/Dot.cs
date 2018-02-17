@@ -93,6 +93,7 @@ namespace BitmatEditor
 
     class DotMatrix
     {
+		public delegate UInt32 ColorToBits(Color? color);
 		List<List<Dot>> DotMat;
 		int Row;
 		int Col;
@@ -141,6 +142,8 @@ namespace BitmatEditor
 			{
 				for(c_cnt=0; c_cnt<Col; c_cnt++)
 				{
+					if (x < 20) continue;
+					if (y < 20) continue;
 					if((x < matrixArea.X + matrixArea.Width * (c_cnt + 1) / Col) &&
 					   (y < matrixArea.Y + matrixArea.Height * (r_cnt + 1) / Row))
 					{
@@ -155,7 +158,7 @@ namespace BitmatEditor
 			return null;
 		}
 
-		public bool ColorExists(Color color)
+		public bool IsColorExists(Color color)
 		{
 			int r_cnt = 0;
 			int c_cnt = 0;
@@ -175,5 +178,93 @@ namespace BitmatEditor
 
 			return false;
 		}
+
+		public void SetAreaColor(Dot dot, Color? color)
+		{
+			int curRow = dot.Row;
+			int curCol = dot.Column;
+			Color? orgColor = dot.BackColor;
+
+			if(curRow > 0)
+			{
+				Dot upper = DotMat[curRow - 1][curCol];
+				if(upper.BackColor == orgColor)
+				{
+					dot.SetColor(color);
+					SetAreaColor(upper, color);
+					return;
+				}
+			}
+			if (curCol > 0)
+			{
+				Dot left = DotMat[curRow][curCol - 1];
+				if (left.BackColor == orgColor)
+				{
+					dot.SetColor(color);
+					SetAreaColor(left, color);
+					return;
+				}
+			}
+			if (curRow < Row-1)
+			{
+				Dot lower = DotMat[curRow + 1][curCol];
+				if (lower.BackColor == orgColor)
+				{
+					dot.SetColor(color);
+					SetAreaColor(lower, color);
+					return;
+				}
+			}
+			if (curCol < Col - 1)
+			{
+				Dot right = DotMat[curRow][curCol + 1];
+				if (right.BackColor == orgColor)
+				{
+					dot.SetColor(color);
+					SetAreaColor(right, color);
+					return;
+				}
+			}
+			dot.SetColor(color);
+		}
+
+		public List<UInt32> ToBitmapArray(ColorToBits ColorToBit)
+		{
+			List<UInt32> list = new List<UInt32>();
+			int r_cnt = 0;
+			int c_cnt = 0;
+			int col_byte = (2 * Col) / 8;
+
+			for (r_cnt = 0; r_cnt < Row; r_cnt++)
+			{
+				List<Dot> item = DotMat[r_cnt];
+				for (c_cnt = 0; c_cnt < col_byte; c_cnt++)
+				{
+					UInt32 dot1 = ColorToBit(item[4 * c_cnt + 0].BackColor);
+					UInt32 dot2 = ColorToBit(item[4 * c_cnt + 1].BackColor);
+					UInt32 dot3 = ColorToBit(item[4 * c_cnt + 2].BackColor);
+					UInt32 dot4 = ColorToBit(item[4 * c_cnt + 3].BackColor);
+
+					UInt32 result = (dot1 << 6) | (dot2 << 4) | (dot3 << 2) | (dot4);
+
+					list.Add(result);
+				}
+
+				int rest = Col % 4;
+				if(rest > 0)
+				{
+					UInt32 result = 0;
+					for (int temp = 0; temp < rest; temp++ )
+					{
+						UInt32 dot = ColorToBit(item[4 * col_byte + temp].BackColor);
+						result |= dot << ( 2 * (3-temp) );
+					}
+					list.Add(result);
+				}
+			}
+
+			return list;
+		}
+
     }
 }

@@ -16,7 +16,7 @@ namespace BitmatEditor
 			"565RGB"  
 		};
 		DotMatrix matrix;
-		Color? SetColor;
+		Color? SelectedColor;
 		RectangleF MatrixArea;
 		Dot SelectedDot;
         public Form1()
@@ -26,12 +26,13 @@ namespace BitmatEditor
 
 			cbColor.DataSource = colorSystem;
 			pDiaplay.Width = 2 * gbControl.Location.X + gbControl.Width;
-			SetColor = null;
+			SelectedColor = null;
 			SelectedDot = null;
 			MatrixArea = new RectangleF(20, 20,
 				this.ClientSize.Width - pDiaplay.Width - 50,
 				this.ClientSize.Height - 50);
 			tlpProperty.Visible = false;
+			nudBitsPerColor_ValueChanged(null, null);
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -83,44 +84,41 @@ namespace BitmatEditor
 			{
 				if(selectedItem.Selected)
 				{
-					tlpProperty.Visible = true;
-					lbRowValue.Text = selectedItem.Row.ToString();
-					lbColValue.Text = selectedItem.Column.ToString();
-
 					if(SelectedDot != null)
 						SelectedDot.Selected = false;
 					SelectedDot = selectedItem;
-					if (cbFillColor.Checked)
+
+					if(SelectedColor != null)
 					{
-						SelectedDot.SetColor(btnFillColor.BackColor);
-						if(ListColorExist(btnFillColor.BackColor) == false)
+						if (cbBrushColor.Checked)
 						{
-							ListViewItem item = new ListViewItem();
-							item.SubItems[0] = new ListViewItem.ListViewSubItem(item, 
-								lvColorList.Items.Count.ToString());
-							item.SubItems.Add(new ListViewItem.ListViewSubItem(item,
-								(btnFillColor.BackColor.ToArgb() & 0xFFFFFF).ToString("X")));
-							item.SubItems.Add(new ListViewItem.ListViewSubItem(item, "", btnFillColor.BackColor, btnFillColor.BackColor, null));
-							lvColorList.Items.Add(item);
+							SelectedDot.SetColor(SelectedColor);
+						}
+						else if (cbFillAreaColor.Checked)
+						{
+							matrix.SetAreaColor(SelectedDot, SelectedColor);
 						}
 					}
 
+					tlpProperty.Visible = true;
+					lbRowValue.Text = selectedItem.Row.ToString();
+					lbColValue.Text = selectedItem.Column.ToString();
 					if (selectedItem.BackColor != null)
 					{
-						btnSelectedColor.BackColor = (Color)selectedItem.BackColor;
-						btnSelectedColor.Text = (((Color)selectedItem.BackColor).ToArgb() & 0xFFFFFF).ToString("X");
+						btnColorValue.BackColor = (Color)selectedItem.BackColor;
+						btnColorValue.Text = (((Color)selectedItem.BackColor).ToArgb() & 0xFFFFFF).ToString("X");
 					}
 					else
 					{
-						btnSelectedColor.BackColor = (Color)SystemColors.Control;
-						btnSelectedColor.Text = "";
+						btnColorValue.BackColor = (Color)SystemColors.Control;
+						btnColorValue.Text = "";
 					}
 				}
 				else
 				{
 					if (SelectedDot != null)
 					{
-						if (cbFillColor.Checked)
+						if (cbBrushColor.Checked)
 						{
 							SelectedDot.SetColor(null);
 						}
@@ -156,37 +154,27 @@ namespace BitmatEditor
 			}
 		}
 
-		private void btnFillColor_Click(object sender, EventArgs e)
-		{
-			ColorDialog cDialog = new ColorDialog();
-			DialogResult res = cDialog.ShowDialog();
-			if(res == System.Windows.Forms.DialogResult.OK)
-			{
-				SetColor = cDialog.Color;
-				btnFillColor.BackColor = cDialog.Color;
-				btnFillColor.Text = (SetColor.Value.ToArgb() & 0xFFFFFF).ToString("X");
-			}
-		}
-
 		private void btnColor_Click(object sender, EventArgs e)
 		{
 			ColorDialog cDialog = new ColorDialog();
 			DialogResult res = cDialog.ShowDialog();
 			if (res == System.Windows.Forms.DialogResult.OK)
 			{
-				btnSelectedColor.BackColor = cDialog.Color;
-				btnSelectedColor.Text = (cDialog.Color.ToArgb() & 0xFFFFFF).ToString("X");
+				btnColorValue.BackColor = cDialog.Color;
+				btnColorValue.Text = (cDialog.Color.ToArgb() & 0xFFFFFF).ToString("X");
 				if (SelectedDot != null)
-					SelectedDot.SetColor(btnSelectedColor.BackColor);
+					SelectedDot.SetColor(btnColorValue.BackColor);
 			}
 		}
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-
+			List<UInt32> list = matrix.ToBitmapArray(ColorToBit);
+			Result res = new Result(list, (int)nudRowCnt.Value, (int)nudColCnt.Value);
+			res.Show();
 		}
 
-		private bool ListColorExist(Color color)
+		private bool IsListColorExist(Color color)
 		{
 			int cnt;
 
@@ -199,5 +187,135 @@ namespace BitmatEditor
 
 			return false;
 		}
-    }
+		private ListViewItem SearchListViewItem(Color color)
+		{
+			for (int cnt = 0; cnt < lvColorList.Items.Count; cnt++)
+			{
+				ListViewItem item = lvColorList.Items[cnt];
+				if (item.SubItems[2].BackColor == color)
+					return item;
+			}
+
+			return null;
+		}
+		private ListViewItem SearchListViewItem(int index)
+		{
+			for (int cnt = 0; cnt < lvColorList.Items.Count; cnt++)
+			{
+				ListViewItem item = lvColorList.Items[cnt];
+				if (item.SubItems[0].Text.Equals(index.ToString()))
+					return item;
+			}
+
+			return null;
+		}
+
+		private void lvColorList_DoubleClick(object sender, EventArgs e)
+		{
+			ColorDialog cDialog = new ColorDialog();
+			DialogResult res = cDialog.ShowDialog();
+			if (res == System.Windows.Forms.DialogResult.OK)
+			{
+				SelectedColor = cDialog.Color;
+				ListViewItemChangeColor(lvColorList.SelectedItems[0], cDialog.Color);
+			}
+		}
+
+		private void cbFillAreaColor_CheckedChanged(object sender, EventArgs e)
+		{
+			if (cbFillAreaColor.Checked)
+			{
+				if (cbBrushColor.Checked)
+					cbBrushColor.Checked = false;
+			}
+		}
+		private void cbFillColor_CheckedChanged(object sender, EventArgs e)
+		{
+			if(cbBrushColor.Checked)
+			{
+				if (cbFillAreaColor.Checked)
+					cbFillAreaColor.Checked = false;
+			}
+		}
+
+		private void nudBitsPerColor_ValueChanged(object sender, EventArgs e)
+		{
+			int curCnt = lvColorList.Items.Count;
+			int targetCnt = (int)Math.Pow(2, (double)nudBitsPerColor.Value);
+
+			if (curCnt < targetCnt)
+			{
+				for(int cnt=0; cnt<(targetCnt-curCnt); cnt++)
+				{
+					AddColorList(Color.Black);
+				}
+			}
+
+			if (curCnt > targetCnt)
+			{
+				for (int cnt = 0; cnt < (curCnt - targetCnt); cnt++)
+				{
+					lvColorList.Items.RemoveAt(lvColorList.Items.Count-1);
+				}
+			}
+		}
+
+		private bool AddColorList(Color? color)
+		{
+			if (color == null)
+				return false;
+			//if (IsListColorExist((Color)color) == true)
+			//	return false;
+
+			ListViewItem item = new ListViewItem();
+			item.UseItemStyleForSubItems = false;
+			item.SubItems[0] = new ListViewItem.ListViewSubItem(item,
+				lvColorList.Items.Count.ToString());
+			item.SubItems.Add(new ListViewItem.ListViewSubItem(item,
+				(((Color)color).ToArgb() & 0xFFFFFF).ToString("X6")));
+			item.SubItems.Add(new ListViewItem.ListViewSubItem(item, "", (Color)color, (Color)color, null));
+			lvColorList.Items.Add(item);
+			return true;
+		}
+		private void ListViewItemChangeColor(ListViewItem item, Color color)
+		{
+			item.UseItemStyleForSubItems = false;
+			item.SubItems[1].Text = (color.ToArgb() & 0xFFFFFF).ToString("X6");
+			item.SubItems[2].BackColor = color;
+		}
+
+		private void lvColorList_SelectedIndexChanged(object sender, EventArgs e)
+		{
+			if(lvColorList.SelectedItems.Count > 0)
+			{
+				ListViewItem item = lvColorList.SelectedItems[0];
+				SelectedColor = item.SubItems[2].BackColor;
+				lbSelectedColor.Text = item.SubItems[0].Text;
+			}
+			else
+			{
+				SelectedColor = null;
+				lbSelectedColor.Text = "N";
+			}
+		}
+
+		private UInt32 ColorToBit(Color? color)
+		{
+			if (color == null)
+				return 0;
+
+			ListViewItem item = SearchListViewItem((Color)color);
+			return UInt32.Parse(item.SubItems[0].Text);
+		}
+
+		private void Form1_MouseDown(object sender, MouseEventArgs e)
+		{
+
+		}
+
+		private void Form1_MouseMove(object sender, MouseEventArgs e)
+		{
+
+		}
+	}
 }

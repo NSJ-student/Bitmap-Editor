@@ -35,22 +35,26 @@
 			this.lbColumn = new System.Windows.Forms.Label();
 			this.lbColValue = new System.Windows.Forms.Label();
 			this.lbColor = new System.Windows.Forms.Label();
-			this.btnSelectedColor = new System.Windows.Forms.Button();
+			this.btnColorValue = new System.Windows.Forms.Button();
 			this.gbControl = new System.Windows.Forms.GroupBox();
+			this.nudBitsPerColor = new System.Windows.Forms.NumericUpDown();
+			this.lbBitsPerColor = new System.Windows.Forms.Label();
+			this.cbFillAreaColor = new System.Windows.Forms.CheckBox();
 			this.lvColorList = new System.Windows.Forms.ListView();
 			this.chIndex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.chColorHex = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.chColor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
-			this.btnFillColor = new System.Windows.Forms.Button();
-			this.cbFillColor = new System.Windows.Forms.CheckBox();
+			this.cbBrushColor = new System.Windows.Forms.CheckBox();
 			this.nudColCnt = new System.Windows.Forms.NumericUpDown();
 			this.nudRowCnt = new System.Windows.Forms.NumericUpDown();
 			this.lbColCnt = new System.Windows.Forms.Label();
 			this.lbRowCnt = new System.Windows.Forms.Label();
 			this.tlpProperty = new System.Windows.Forms.TableLayoutPanel();
 			this.pDiaplay = new System.Windows.Forms.Panel();
-			this.btnSave = new System.Windows.Forms.Button();
+			this.btnMake = new System.Windows.Forms.Button();
+			this.lbSelectedColor = new System.Windows.Forms.Label();
 			this.gbControl.SuspendLayout();
+			((System.ComponentModel.ISupportInitialize)(this.nudBitsPerColor)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudColCnt)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudRowCnt)).BeginInit();
 			this.tlpProperty.SuspendLayout();
@@ -130,22 +134,25 @@
 			this.lbColor.TabIndex = 4;
 			this.lbColor.Text = "Color :";
 			// 
-			// btnSelectedColor
+			// btnColorValue
 			// 
-			this.btnSelectedColor.Anchor = System.Windows.Forms.AnchorStyles.Left;
-			this.btnSelectedColor.Location = new System.Drawing.Point(85, 70);
-			this.btnSelectedColor.Margin = new System.Windows.Forms.Padding(5, 3, 3, 3);
-			this.btnSelectedColor.Name = "btnSelectedColor";
-			this.btnSelectedColor.Size = new System.Drawing.Size(83, 23);
-			this.btnSelectedColor.TabIndex = 3;
-			this.btnSelectedColor.UseVisualStyleBackColor = true;
-			this.btnSelectedColor.Click += new System.EventHandler(this.btnColor_Click);
+			this.btnColorValue.Anchor = System.Windows.Forms.AnchorStyles.Left;
+			this.btnColorValue.Location = new System.Drawing.Point(85, 70);
+			this.btnColorValue.Margin = new System.Windows.Forms.Padding(5, 3, 3, 3);
+			this.btnColorValue.Name = "btnColorValue";
+			this.btnColorValue.Size = new System.Drawing.Size(83, 23);
+			this.btnColorValue.TabIndex = 3;
+			this.btnColorValue.UseVisualStyleBackColor = true;
+			this.btnColorValue.Click += new System.EventHandler(this.btnColor_Click);
 			// 
 			// gbControl
 			// 
+			this.gbControl.Controls.Add(this.lbSelectedColor);
+			this.gbControl.Controls.Add(this.nudBitsPerColor);
+			this.gbControl.Controls.Add(this.lbBitsPerColor);
+			this.gbControl.Controls.Add(this.cbFillAreaColor);
 			this.gbControl.Controls.Add(this.lvColorList);
-			this.gbControl.Controls.Add(this.btnFillColor);
-			this.gbControl.Controls.Add(this.cbFillColor);
+			this.gbControl.Controls.Add(this.cbBrushColor);
 			this.gbControl.Controls.Add(this.nudColCnt);
 			this.gbControl.Controls.Add(this.nudRowCnt);
 			this.gbControl.Controls.Add(this.lbColCnt);
@@ -157,6 +164,50 @@
 			this.gbControl.TabStop = false;
 			this.gbControl.Text = "Control";
 			// 
+			// nudBitsPerColor
+			// 
+			this.nudBitsPerColor.Location = new System.Drawing.Point(112, 221);
+			this.nudBitsPerColor.Maximum = new decimal(new int[] {
+            8,
+            0,
+            0,
+            0});
+			this.nudBitsPerColor.Minimum = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.nudBitsPerColor.Name = "nudBitsPerColor";
+			this.nudBitsPerColor.Size = new System.Drawing.Size(56, 25);
+			this.nudBitsPerColor.TabIndex = 9;
+			this.nudBitsPerColor.Value = new decimal(new int[] {
+            1,
+            0,
+            0,
+            0});
+			this.nudBitsPerColor.ValueChanged += new System.EventHandler(this.nudBitsPerColor_ValueChanged);
+			// 
+			// lbBitsPerColor
+			// 
+			this.lbBitsPerColor.AutoSize = true;
+			this.lbBitsPerColor.Location = new System.Drawing.Point(7, 223);
+			this.lbBitsPerColor.Name = "lbBitsPerColor";
+			this.lbBitsPerColor.Size = new System.Drawing.Size(99, 15);
+			this.lbBitsPerColor.TabIndex = 8;
+			this.lbBitsPerColor.Text = "BitsPerColor: ";
+			// 
+			// cbFillAreaColor
+			// 
+			this.cbFillAreaColor.Appearance = System.Windows.Forms.Appearance.Button;
+			this.cbFillAreaColor.AutoSize = true;
+			this.cbFillAreaColor.Location = new System.Drawing.Point(76, 96);
+			this.cbFillAreaColor.Name = "cbFillAreaColor";
+			this.cbFillAreaColor.Size = new System.Drawing.Size(34, 25);
+			this.cbFillAreaColor.TabIndex = 7;
+			this.cbFillAreaColor.Text = "Fill";
+			this.cbFillAreaColor.UseVisualStyleBackColor = true;
+			this.cbFillAreaColor.CheckedChanged += new System.EventHandler(this.cbFillAreaColor_CheckedChanged);
+			// 
 			// lvColorList
 			// 
 			this.lvColorList.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -165,12 +216,15 @@
             this.chColor});
 			this.lvColorList.FullRowSelect = true;
 			this.lvColorList.HeaderStyle = System.Windows.Forms.ColumnHeaderStyle.Nonclickable;
-			this.lvColorList.Location = new System.Drawing.Point(17, 137);
+			this.lvColorList.Location = new System.Drawing.Point(10, 127);
+			this.lvColorList.MultiSelect = false;
 			this.lvColorList.Name = "lvColorList";
-			this.lvColorList.Size = new System.Drawing.Size(142, 88);
+			this.lvColorList.Size = new System.Drawing.Size(158, 88);
 			this.lvColorList.TabIndex = 6;
 			this.lvColorList.UseCompatibleStateImageBehavior = false;
 			this.lvColorList.View = System.Windows.Forms.View.Details;
+			this.lvColorList.SelectedIndexChanged += new System.EventHandler(this.lvColorList_SelectedIndexChanged);
+			this.lvColorList.DoubleClick += new System.EventHandler(this.lvColorList_DoubleClick);
 			// 
 			// chIndex
 			// 
@@ -186,26 +240,17 @@
 			this.chColor.Text = "";
 			this.chColor.Width = 20;
 			// 
-			// btnFillColor
+			// cbBrushColor
 			// 
-			this.btnFillColor.FlatStyle = System.Windows.Forms.FlatStyle.Flat;
-			this.btnFillColor.Location = new System.Drawing.Point(79, 87);
-			this.btnFillColor.Name = "btnFillColor";
-			this.btnFillColor.Size = new System.Drawing.Size(80, 25);
-			this.btnFillColor.TabIndex = 5;
-			this.btnFillColor.UseVisualStyleBackColor = true;
-			this.btnFillColor.Click += new System.EventHandler(this.btnFillColor_Click);
-			// 
-			// cbFillColor
-			// 
-			this.cbFillColor.Appearance = System.Windows.Forms.Appearance.Button;
-			this.cbFillColor.AutoSize = true;
-			this.cbFillColor.Location = new System.Drawing.Point(17, 87);
-			this.cbFillColor.Name = "cbFillColor";
-			this.cbFillColor.Size = new System.Drawing.Size(34, 25);
-			this.cbFillColor.TabIndex = 4;
-			this.cbFillColor.Text = "Fill";
-			this.cbFillColor.UseVisualStyleBackColor = true;
+			this.cbBrushColor.Appearance = System.Windows.Forms.Appearance.Button;
+			this.cbBrushColor.AutoSize = true;
+			this.cbBrushColor.Location = new System.Drawing.Point(10, 96);
+			this.cbBrushColor.Name = "cbBrushColor";
+			this.cbBrushColor.Size = new System.Drawing.Size(55, 25);
+			this.cbBrushColor.TabIndex = 4;
+			this.cbBrushColor.Text = "Brush";
+			this.cbBrushColor.UseVisualStyleBackColor = true;
+			this.cbBrushColor.CheckedChanged += new System.EventHandler(this.cbFillColor_CheckedChanged);
 			// 
 			// nudColCnt
 			// 
@@ -274,7 +319,7 @@
 			this.tlpProperty.ColumnCount = 2;
 			this.tlpProperty.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 40F));
 			this.tlpProperty.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 60F));
-			this.tlpProperty.Controls.Add(this.btnSelectedColor, 1, 3);
+			this.tlpProperty.Controls.Add(this.btnColorValue, 1, 3);
 			this.tlpProperty.Controls.Add(this.lbRow, 0, 1);
 			this.tlpProperty.Controls.Add(this.lbColumn, 0, 2);
 			this.tlpProperty.Controls.Add(this.lbColor, 0, 3);
@@ -294,7 +339,7 @@
 			// 
 			// pDiaplay
 			// 
-			this.pDiaplay.Controls.Add(this.btnSave);
+			this.pDiaplay.Controls.Add(this.btnMake);
 			this.pDiaplay.Controls.Add(this.tlpProperty);
 			this.pDiaplay.Controls.Add(this.gbControl);
 			this.pDiaplay.Controls.Add(this.cbColor);
@@ -305,15 +350,26 @@
 			this.pDiaplay.Size = new System.Drawing.Size(201, 454);
 			this.pDiaplay.TabIndex = 5;
 			// 
-			// btnSave
+			// btnMake
 			// 
-			this.btnSave.Location = new System.Drawing.Point(126, 18);
-			this.btnSave.Name = "btnSave";
-			this.btnSave.Size = new System.Drawing.Size(62, 53);
-			this.btnSave.TabIndex = 4;
-			this.btnSave.Text = "Save";
-			this.btnSave.UseVisualStyleBackColor = true;
-			this.btnSave.Click += new System.EventHandler(this.btnSave_Click);
+			this.btnMake.Location = new System.Drawing.Point(126, 18);
+			this.btnMake.Name = "btnMake";
+			this.btnMake.Size = new System.Drawing.Size(62, 53);
+			this.btnMake.TabIndex = 4;
+			this.btnMake.Text = "Make";
+			this.btnMake.UseVisualStyleBackColor = true;
+			this.btnMake.Click += new System.EventHandler(this.btnSave_Click);
+			// 
+			// lbSelectedColor
+			// 
+			this.lbSelectedColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.lbSelectedColor.Location = new System.Drawing.Point(139, 96);
+			this.lbSelectedColor.Name = "lbSelectedColor";
+			this.lbSelectedColor.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this.lbSelectedColor.Size = new System.Drawing.Size(29, 25);
+			this.lbSelectedColor.TabIndex = 10;
+			this.lbSelectedColor.Text = "N";
+			this.lbSelectedColor.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// Form1
 			// 
@@ -327,9 +383,12 @@
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
 			this.gbControl.ResumeLayout(false);
 			this.gbControl.PerformLayout();
+			((System.ComponentModel.ISupportInitialize)(this.nudBitsPerColor)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudColCnt)).EndInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudRowCnt)).EndInit();
 			this.tlpProperty.ResumeLayout(false);
@@ -349,21 +408,24 @@
         private System.Windows.Forms.Label lbRowValue;
         private System.Windows.Forms.Label lbRow;
         private System.Windows.Forms.Label lbColor;
-        private System.Windows.Forms.Button btnSelectedColor;
+        private System.Windows.Forms.Button btnColorValue;
 		private System.Windows.Forms.GroupBox gbControl;
         private System.Windows.Forms.Label lbColCnt;
         private System.Windows.Forms.Label lbRowCnt;
         private System.Windows.Forms.NumericUpDown nudColCnt;
         private System.Windows.Forms.NumericUpDown nudRowCnt;
-        private System.Windows.Forms.CheckBox cbFillColor;
-		private System.Windows.Forms.Button btnFillColor;
+		private System.Windows.Forms.CheckBox cbBrushColor;
 		private System.Windows.Forms.TableLayoutPanel tlpProperty;
 		private System.Windows.Forms.Panel pDiaplay;
-		private System.Windows.Forms.Button btnSave;
+		private System.Windows.Forms.Button btnMake;
 		private System.Windows.Forms.ListView lvColorList;
 		private System.Windows.Forms.ColumnHeader chIndex;
 		private System.Windows.Forms.ColumnHeader chColorHex;
 		private System.Windows.Forms.ColumnHeader chColor;
+		private System.Windows.Forms.CheckBox cbFillAreaColor;
+		private System.Windows.Forms.NumericUpDown nudBitsPerColor;
+		private System.Windows.Forms.Label lbBitsPerColor;
+		private System.Windows.Forms.Label lbSelectedColor;
     }
 }
 
