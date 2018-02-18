@@ -37,6 +37,7 @@
 			this.lbColor = new System.Windows.Forms.Label();
 			this.btnColorValue = new System.Windows.Forms.Button();
 			this.gbControl = new System.Windows.Forms.GroupBox();
+			this.lbSelectedColor = new System.Windows.Forms.Label();
 			this.nudBitsPerColor = new System.Windows.Forms.NumericUpDown();
 			this.lbBitsPerColor = new System.Windows.Forms.Label();
 			this.cbFillAreaColor = new System.Windows.Forms.CheckBox();
@@ -52,7 +53,6 @@
 			this.tlpProperty = new System.Windows.Forms.TableLayoutPanel();
 			this.pDiaplay = new System.Windows.Forms.Panel();
 			this.btnMake = new System.Windows.Forms.Button();
-			this.lbSelectedColor = new System.Windows.Forms.Label();
 			this.gbControl.SuspendLayout();
 			((System.ComponentModel.ISupportInitialize)(this.nudBitsPerColor)).BeginInit();
 			((System.ComponentModel.ISupportInitialize)(this.nudColCnt)).BeginInit();
@@ -163,6 +163,17 @@
 			this.gbControl.TabIndex = 3;
 			this.gbControl.TabStop = false;
 			this.gbControl.Text = "Control";
+			// 
+			// lbSelectedColor
+			// 
+			this.lbSelectedColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+			this.lbSelectedColor.Location = new System.Drawing.Point(139, 96);
+			this.lbSelectedColor.Name = "lbSelectedColor";
+			this.lbSelectedColor.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
+			this.lbSelectedColor.Size = new System.Drawing.Size(29, 25);
+			this.lbSelectedColor.TabIndex = 10;
+			this.lbSelectedColor.Text = "N";
+			this.lbSelectedColor.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
 			// 
 			// nudBitsPerColor
 			// 
@@ -360,17 +371,6 @@
 			this.btnMake.UseVisualStyleBackColor = true;
 			this.btnMake.Click += new System.EventHandler(this.btnSave_Click);
 			// 
-			// lbSelectedColor
-			// 
-			this.lbSelectedColor.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-			this.lbSelectedColor.Location = new System.Drawing.Point(139, 96);
-			this.lbSelectedColor.Name = "lbSelectedColor";
-			this.lbSelectedColor.RightToLeft = System.Windows.Forms.RightToLeft.Yes;
-			this.lbSelectedColor.Size = new System.Drawing.Size(29, 25);
-			this.lbSelectedColor.TabIndex = 10;
-			this.lbSelectedColor.Text = "N";
-			this.lbSelectedColor.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-			// 
 			// Form1
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 15F);
@@ -378,11 +378,14 @@
 			this.ClientSize = new System.Drawing.Size(717, 454);
 			this.Controls.Add(this.pDiaplay);
 			this.DoubleBuffered = true;
+			this.KeyPreview = true;
 			this.Name = "Form1";
 			this.Text = "Bitmap Editor";
 			this.Load += new System.EventHandler(this.Form1_Load);
 			this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
+			this.KeyDown += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyDown);
+			this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.Form1_KeyUp);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
 			this.MouseLeave += new System.EventHandler(this.Form1_MouseLeave);
 			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);

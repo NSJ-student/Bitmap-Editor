@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using System.IO;
 
 namespace BitmatEditor
 {
@@ -24,6 +25,11 @@ namespace BitmatEditor
 			Row = row;
 			Col = col;
 
+			MakeString();
+		}
+
+		public void MakeString()
+		{
 			int r_cnt = 0;
 			int c_cnt = 0;
 			int col_byte = (int)Math.Round(((float)(2 * Col) / 8) + 0.5);
@@ -33,11 +39,45 @@ namespace BitmatEditor
 				for (c_cnt = 0; c_cnt < col_byte; c_cnt++)
 				{
 					UInt32 d = data.ElementAt(r_cnt * col_byte + c_cnt);
-					strRow += "0x" + d.ToString("X2") + " ";
+					strRow += "0x" + d.ToString("X2") + ", ";
 				}
 				strRow += "\n";
 				rtbResult.AppendText(strRow);
 			}
+		}
+
+		private void btnSave_Click(object sender, EventArgs e)
+		{
+			FolderBrowserDialog dialog = new FolderBrowserDialog();
+
+			if(dialog.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+			{
+				string path = Path.Combine(dialog.SelectedPath, "test.txt");
+				//string path = "test.txt";
+				FileStream stream;
+				if(!File.Exists(path))
+				{
+					try
+					{
+						File.Create(path, 1024).Close();
+					}
+					catch(FileNotFoundException em)
+					{
+						MessageBox.Show(string.Format("Access Denied to [{0}]", dialog.SelectedPath), "Access Denied");
+						return;
+					}
+				}
+				stream = File.Open(path, FileMode.Open);
+
+				rtbResult.SaveFile(stream, RichTextBoxStreamType.PlainText);
+				stream.Close();
+			}
+		}
+
+		private void btnClose_Click(object sender, EventArgs e)
+		{
+			this.Close();
+			this.Dispose();
 		}
 	}
 }
