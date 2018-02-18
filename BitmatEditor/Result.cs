@@ -16,14 +16,16 @@ namespace BitmatEditor
 		List<UInt32> data;
 		int Row;
 		int Col;
+		int BitsPerColor;
 
-		public Result(List<UInt32> list, int row, int col)
+		public Result(List<UInt32> list, int row, int col, int bpc)
 		{
 			InitializeComponent();
 
 			data = list;
 			Row = row;
 			Col = col;
+			BitsPerColor = bpc;
 
 			MakeString();
 		}
@@ -32,7 +34,7 @@ namespace BitmatEditor
 		{
 			int r_cnt = 0;
 			int c_cnt = 0;
-			int col_byte = (int)Math.Round(((float)(2 * Col) / 8) + 0.5);
+			int col_byte = (int)Math.Round(((float)(BitsPerColor * Col) / 8) + 0.5);
 			for (r_cnt = 0; r_cnt < Row; r_cnt++)
 			{
 				string strRow = "";

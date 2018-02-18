@@ -228,35 +228,36 @@ namespace BitmatEditor
 			}
 		}
 
-		public List<UInt32> ToBitmapArray(ColorToBits ColorToBit)
+		public List<UInt32> ToBitmapArray(ColorToBits ColorToBit, int BitsPerColor)
 		{
 			List<UInt32> list = new List<UInt32>();
 			int r_cnt = 0;
-			int c_cnt = 0;
-			int col_byte = (2 * Col) / 8;
+			int b_cnt = 0;
+			int total_byte = (BitsPerColor * Col) / 8;
+			int col_per_byte = (int)(8 / BitsPerColor);
 
 			for (r_cnt = 0; r_cnt < Row; r_cnt++)
 			{
 				List<Dot> item = DotMat[r_cnt];
-				for (c_cnt = 0; c_cnt < col_byte; c_cnt++)
+				for (b_cnt = 0; b_cnt < total_byte; b_cnt++)
 				{
-					UInt32 dot1 = ColorToBit(item[4 * c_cnt + 0].BackColor);
-					UInt32 dot2 = ColorToBit(item[4 * c_cnt + 1].BackColor);
-					UInt32 dot3 = ColorToBit(item[4 * c_cnt + 2].BackColor);
-					UInt32 dot4 = ColorToBit(item[4 * c_cnt + 3].BackColor);
-
-					UInt32 result = (dot1 << 6) | (dot2 << 4) | (dot3 << 2) | (dot4);
+					UInt32 result = 0;
+					for(int i=0; i<col_per_byte; i++)
+					{
+						UInt32 dot = ColorToBit(item[col_per_byte * b_cnt + i].BackColor);
+						result |= (dot << (BitsPerColor * (col_per_byte - 1 - i)));
+					}
 
 					list.Add(result);
 				}
 
-				int rest = Col % 4;
+				int rest = Col % col_per_byte;
 				if(rest > 0)
 				{
 					UInt32 result = 0;
 					for (int temp = 0; temp < rest; temp++ )
 					{
-						UInt32 dot = ColorToBit(item[4 * col_byte + temp].BackColor);
+						UInt32 dot = ColorToBit(item[col_per_byte * total_byte + temp].BackColor);
 						result |= dot << ( 2 * (3-temp) );
 					}
 					list.Add(result);

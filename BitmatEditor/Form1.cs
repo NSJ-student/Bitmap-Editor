@@ -97,8 +97,8 @@ namespace BitmatEditor
 
 		private void btnSave_Click(object sender, EventArgs e)
 		{
-			List<UInt32> list = matrix.ToBitmapArray(ColorToBit);
-			Result res = new Result(list, (int)nudRowCnt.Value, (int)nudColCnt.Value);
+			List<UInt32> list = matrix.ToBitmapArray(ColorToBit, (int)nudBitsPerColor.Value);
+			Result res = new Result(list, (int)nudRowCnt.Value, (int)nudColCnt.Value, (int)nudBitsPerColor.Value);
 			res.Show();
 		}
 
