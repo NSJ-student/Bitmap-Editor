@@ -384,6 +384,7 @@
 			this.SizeChanged += new System.EventHandler(this.Form1_SizeChanged);
 			this.Paint += new System.Windows.Forms.PaintEventHandler(this.Form1_Paint);
 			this.MouseDown += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseDown);
+			this.MouseLeave += new System.EventHandler(this.Form1_MouseLeave);
 			this.MouseMove += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseMove);
 			this.MouseUp += new System.Windows.Forms.MouseEventHandler(this.Form1_MouseUp);
 			this.gbControl.ResumeLayout(false);

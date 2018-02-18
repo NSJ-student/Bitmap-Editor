@@ -19,6 +19,7 @@ namespace BitmatEditor
 		Color? SelectedColor;
 		RectangleF MatrixArea;
 		Dot SelectedDot;
+		bool bDrag;
         public Form1()
         {
             InitializeComponent();
@@ -33,6 +34,7 @@ namespace BitmatEditor
 				this.ClientSize.Height - 50);
 			tlpProperty.Visible = false;
 			nudBitsPerColor_ValueChanged(null, null);
+			bDrag = false;
         }
 
         private void Form1_Load(object sender, EventArgs e)
@@ -75,83 +77,6 @@ namespace BitmatEditor
 		{
 			MatrixArea.Size = new Size(this.ClientSize.Width - pDiaplay.Width - 50, this.ClientSize.Height - 50);
 			Invalidate(true);
-		}
-
-		private void Form1_MouseUp(object sender, MouseEventArgs e)
-		{
-			Dot selectedItem = matrix.SelectDot(MatrixArea, e.X, e.Y);
-			if (selectedItem != null)
-			{
-				if(selectedItem.Selected)
-				{
-					if(SelectedDot != null)
-						SelectedDot.Selected = false;
-					SelectedDot = selectedItem;
-
-					if(SelectedColor != null)
-					{
-						if (cbBrushColor.Checked)
-						{
-							SelectedDot.SetColor(SelectedColor);
-						}
-						else if (cbFillAreaColor.Checked)
-						{
-							matrix.SetAreaColor(SelectedDot, SelectedColor);
-						}
-					}
-
-					tlpProperty.Visible = true;
-					lbRowValue.Text = selectedItem.Row.ToString();
-					lbColValue.Text = selectedItem.Column.ToString();
-					if (selectedItem.BackColor != null)
-					{
-						btnColorValue.BackColor = (Color)selectedItem.BackColor;
-						btnColorValue.Text = (((Color)selectedItem.BackColor).ToArgb() & 0xFFFFFF).ToString("X");
-					}
-					else
-					{
-						btnColorValue.BackColor = (Color)SystemColors.Control;
-						btnColorValue.Text = "";
-					}
-				}
-				else
-				{
-					if (SelectedDot != null)
-					{
-						if (cbBrushColor.Checked)
-						{
-							SelectedDot.SetColor(null);
-						}
-						SelectedDot = null;
-					}
-					tlpProperty.Visible = false;
-				}
-
-				Rectangle rect = new Rectangle(
-					(int)Math.Ceiling(MatrixArea.X),
-					(int)Math.Ceiling(MatrixArea.Y),
-					(int)Math.Ceiling(MatrixArea.Width),
-					(int)Math.Ceiling(MatrixArea.Height)
-					);
-				Invalidate(rect, true);
-			}
-			else
-			{
-				if (SelectedDot != null)
-				{
-					SelectedDot.Selected = false;
-					SelectedDot = null;
-					tlpProperty.Visible = false;
-
-					Rectangle rect = new Rectangle(
-						(int)Math.Ceiling(MatrixArea.X),
-						(int)Math.Ceiling(MatrixArea.Y),
-						(int)Math.Ceiling(MatrixArea.Width),
-						(int)Math.Ceiling(MatrixArea.Height)
-						);
-					Invalidate(rect, true);
-				}
-			}
 		}
 
 		private void btnColor_Click(object sender, EventArgs e)
@@ -310,12 +235,100 @@ namespace BitmatEditor
 
 		private void Form1_MouseDown(object sender, MouseEventArgs e)
 		{
-
+			//Dot selectedItem = matrix.SelectDot(MatrixArea, e.X, e.Y);
+			//if (selectedItem != null)
+			//{
+			//	bDrag = true;
+			//}
 		}
 
 		private void Form1_MouseMove(object sender, MouseEventArgs e)
 		{
 
 		}
+		private void Form1_MouseUp(object sender, MouseEventArgs e)
+		{
+			Dot selectedItem = matrix.SelectDot(MatrixArea, e.X, e.Y);
+			if (selectedItem != null)
+			{
+				selectedItem.ToggleFocus();
+
+				if (selectedItem.Selected)
+				{
+					if (SelectedDot != null)
+						SelectedDot.Selected = false;
+					SelectedDot = selectedItem;
+
+					if (SelectedColor != null)
+					{
+						if (cbBrushColor.Checked)
+						{
+							SelectedDot.SetColor(SelectedColor);
+						}
+						else if (cbFillAreaColor.Checked)
+						{
+							matrix.FillAreaColor(SelectedDot, SelectedDot.BackColor, SelectedColor);
+						}
+					}
+
+					tlpProperty.Visible = true;
+					lbRowValue.Text = selectedItem.Row.ToString();
+					lbColValue.Text = selectedItem.Column.ToString();
+					if (selectedItem.BackColor != null)
+					{
+						btnColorValue.BackColor = (Color)selectedItem.BackColor;
+						btnColorValue.Text = (((Color)selectedItem.BackColor).ToArgb() & 0xFFFFFF).ToString("X");
+					}
+					else
+					{
+						btnColorValue.BackColor = (Color)SystemColors.Control;
+						btnColorValue.Text = "";
+					}
+				}
+				else
+				{
+					if (SelectedDot != null)
+					{
+						if (cbBrushColor.Checked)
+						{
+							SelectedDot.SetColor(null);
+						}
+						SelectedDot = null;
+					}
+					tlpProperty.Visible = false;
+				}
+
+				Rectangle rect = new Rectangle(
+					(int)Math.Ceiling(MatrixArea.X),
+					(int)Math.Ceiling(MatrixArea.Y),
+					(int)Math.Ceiling(MatrixArea.Width),
+					(int)Math.Ceiling(MatrixArea.Height)
+					);
+				Invalidate(rect, true);
+			}
+			else
+			{
+				if (SelectedDot != null)
+				{
+					SelectedDot.Selected = false;
+					SelectedDot = null;
+					tlpProperty.Visible = false;
+
+					Rectangle rect = new Rectangle(
+						(int)Math.Ceiling(MatrixArea.X),
+						(int)Math.Ceiling(MatrixArea.Y),
+						(int)Math.Ceiling(MatrixArea.Width),
+						(int)Math.Ceiling(MatrixArea.Height)
+						);
+					Invalidate(rect, true);
+				}
+			}
+		}
+
+		private void Form1_MouseLeave(object sender, EventArgs e)
+		{
+
+		}
+
 	}
 }

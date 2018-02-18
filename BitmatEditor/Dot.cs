@@ -148,7 +148,6 @@ namespace BitmatEditor
 					   (y < matrixArea.Y + matrixArea.Height * (r_cnt + 1) / Row))
 					{
 						List<Dot> item = DotMat[r_cnt];
-						item[c_cnt].ToggleFocus();
 						return item[c_cnt];
 					}
 
@@ -179,11 +178,13 @@ namespace BitmatEditor
 			return false;
 		}
 
-		public void SetAreaColor(Dot dot, Color? color)
+		public void FillAreaColor(Dot dot, Color? orgColor, Color? color)
 		{
 			int curRow = dot.Row;
 			int curCol = dot.Column;
-			Color? orgColor = dot.BackColor;
+
+			if (orgColor == color)
+				return;
 
 			if(curRow > 0)
 			{
@@ -191,8 +192,7 @@ namespace BitmatEditor
 				if(upper.BackColor == orgColor)
 				{
 					dot.SetColor(color);
-					SetAreaColor(upper, color);
-					return;
+					FillAreaColor(upper, orgColor, color);
 				}
 			}
 			if (curCol > 0)
@@ -201,8 +201,7 @@ namespace BitmatEditor
 				if (left.BackColor == orgColor)
 				{
 					dot.SetColor(color);
-					SetAreaColor(left, color);
-					return;
+					FillAreaColor(left, orgColor, color);
 				}
 			}
 			if (curRow < Row-1)
@@ -211,8 +210,7 @@ namespace BitmatEditor
 				if (lower.BackColor == orgColor)
 				{
 					dot.SetColor(color);
-					SetAreaColor(lower, color);
-					return;
+					FillAreaColor(lower, orgColor, color);
 				}
 			}
 			if (curCol < Col - 1)
@@ -221,11 +219,13 @@ namespace BitmatEditor
 				if (right.BackColor == orgColor)
 				{
 					dot.SetColor(color);
-					SetAreaColor(right, color);
-					return;
+					FillAreaColor(right, orgColor, color);
 				}
 			}
-			dot.SetColor(color);
+			if (dot.BackColor == orgColor)
+			{
+				dot.SetColor(color);
+			}
 		}
 
 		public List<UInt32> ToBitmapArray(ColorToBits ColorToBit)
