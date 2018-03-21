@@ -189,6 +189,7 @@
             0,
             0});
 			this.nudBitsPerColor.Name = "nudBitsPerColor";
+			this.nudBitsPerColor.ReadOnly = true;
 			this.nudBitsPerColor.Size = new System.Drawing.Size(56, 25);
 			this.nudBitsPerColor.TabIndex = 9;
 			this.nudBitsPerColor.Value = new decimal(new int[] {

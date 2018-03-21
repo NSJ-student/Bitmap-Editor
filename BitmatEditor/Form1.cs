@@ -21,7 +21,6 @@ namespace BitmatEditor
 		Dot SelectedDot;
 		Dot MouseDownDot;
 		bool bDrag = false;
-		bool bCtrlPressed = false;
 
         public Form1()
         {
@@ -30,13 +29,20 @@ namespace BitmatEditor
 
 			cbColor.DataSource = colorSystem;
 			pDiaplay.Width = 2 * gbControl.Location.X + gbControl.Width;
+			this.MinimumSize = new Size(pDiaplay.Width + 200,
+				pDiaplay.Location.Y + pDiaplay.Size.Height + tlpProperty.Size.Height);
+
 			SelectedColor = null;
 			SelectedDot = null;
 			MouseDownDot = null;
+
 			MatrixArea = new RectangleF(20, 20,
 				this.ClientSize.Width - pDiaplay.Width - 50,
 				this.ClientSize.Height - 50);
+
 			tlpProperty.Visible = false;
+
+
 			nudBitsPerColor_ValueChanged(null, null);
         }
 
@@ -153,21 +159,49 @@ namespace BitmatEditor
 		{
 			if (cbFillAreaColor.Checked)
 			{
+				this.Cursor = Cursors.Hand;
 				if (cbBrushColor.Checked)
 					cbBrushColor.Checked = false;
+			}
+			else
+			{
+				if (!cbBrushColor.Checked)
+					this.Cursor = Cursors.Default;
 			}
 		}
 		private void cbFillColor_CheckedChanged(object sender, EventArgs e)
 		{
 			if(cbBrushColor.Checked)
 			{
+				this.Cursor = Cursors.AppStarting;
 				if (cbFillAreaColor.Checked)
 					cbFillAreaColor.Checked = false;
+			}
+			else
+			{
+				if (!cbFillAreaColor.Checked)
+					this.Cursor = Cursors.Default;
 			}
 		}
 
 		private void nudBitsPerColor_ValueChanged(object sender, EventArgs e)
 		{
+			if ((int)nudBitsPerColor.Value == 3)
+			{
+ 				if(lvColorList.Items.Count == 4)
+				{
+					nudBitsPerColor.Value = 4;
+				}
+				else if(lvColorList.Items.Count == 16)
+				{
+					nudBitsPerColor.Value = 2;
+				}
+			}
+			if ((int)nudBitsPerColor.Value == 5)
+				nudBitsPerColor.Value = 8;
+			if ((int)nudBitsPerColor.Value == 7)
+				nudBitsPerColor.Value = 4;
+
 			int curCnt = lvColorList.Items.Count;
 			int targetCnt = (int)Math.Pow(2, (double)nudBitsPerColor.Value);
 
@@ -242,7 +276,7 @@ namespace BitmatEditor
 			if (selectedItem != null)
 			{
 				MouseDownDot = selectedItem;
-				if (cbBrushColor.Checked && bCtrlPressed)
+				if (cbBrushColor.Checked)
 				{
 					if (selectedItem.BackColor != SelectedColor)
 					{
@@ -396,34 +430,14 @@ namespace BitmatEditor
 			{
 				bDrag = false;
 			}
-			if(bCtrlPressed)
-			{
-				bCtrlPressed = false;
-			}
 		}
 
 		private void Form1_KeyUp(object sender, KeyEventArgs e)
 		{
-			if ((e.KeyData & Keys.Control) != 0)
-			{
-				bCtrlPressed = true;
-			}
-			else
-			{
-				bCtrlPressed = false;
-			}
 		}
 
 		private void Form1_KeyDown(object sender, KeyEventArgs e)
 		{
-			if ((e.KeyData & Keys.Control) != 0)
-			{
-				bCtrlPressed = true;
-			}
-			else
-			{
-				bCtrlPressed = false;
-			}
 		}
 	}
 }
